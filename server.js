@@ -1,11 +1,23 @@
-var express = require("express");
+const express = require("express");
+const app = express();
+const port = 8081;
+
 const bodyParser = require("body-parser");
-var app = express();
 const MongoClient = require("mongodb").MongoClient;
 const connectionString =
   "mongodb+srv://admin:admin@cluster0-mtnrw.mongodb.net/<dbname>?retryWrites=true&w=majority";
 
-// Added by Max
+//  Make sure you place body-parser before your CRUD handlers!
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", function (req, res) {
+  //res.send("Hello World");
+  res.sendFile(__dirname + "/test.html");
+});
+
+app.listen(port, () =>
+  console.log(`Example app listening at http://localhost:${port}`)
+);
 
 MongoClient.connect(
   connectionString,
@@ -20,14 +32,6 @@ MongoClient.connect(
     //console.log(testConnection);
   }
 );
-
-// Make sure you place body-parser before your CRUD handlers!
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get("/", function (req, res) {
-  //res.send("Hello World");
-  res.sendFile(__dirname + "/test.html");
-});
 
 app.post("/quotes", function (req, res) {
   var requestObjectReceivedByServer = req.body;
@@ -44,13 +48,4 @@ app.post("/quotes", function (req, res) {
   //       console.log(result);
   //     })
   //     .catch((error) => console.error(error));
-
-  res.redirect("/");
-});
-
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log("Example app listening at http://%s:%s", host, port);
 });
