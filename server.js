@@ -54,5 +54,9 @@ app.post("/quotes", function (req, res) {
   //     .catch((error) => console.error(error));
 });
 
+<<<<<<< HEAD
 //123
 //Comment from max
+=======
+//comment from Alex
+>>>>>>> 07bde7ff8aeb8b13ef12e2c468a6f03c9be47c86
