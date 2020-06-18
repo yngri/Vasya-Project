@@ -1,10 +1,10 @@
 const home = require('./routes/home');
-const quotes = require('./routes.quotes');
+const quotes = require('./routes/quotes');
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const express = require("express");
 const app = express();
-const port = 3001;
+const port = 3003;
 
 app.use(bodyParser.urlencoded({
     extended: true
