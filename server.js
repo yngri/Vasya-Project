@@ -10,21 +10,20 @@ app.use("/quotes", quotes); //uses imported router from quotes const on /quotes 
 app.use("/", home); //uses imported router from homes const on / endpoint
 
 const connectionString =
-    "mongodb+srv://admin:admin@cluster0-mtnrw.mongodb.net/<dbname>?retryWrites=true&w=majority";
+  "mongodb+srv://admin:admin@cluster0-mtnrw.mongodb.net/<dbname>?retryWrites=true&w=majority";
 
-app.listen(port, () =>
-    console.log(`Example app listening at http://localhost:${port}`)
-);
+app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 
 MongoClient.connect(
-    connectionString, {
-        useUnifiedTopology: true,
-    },
-    (err, client) => {
-        // ... do something here
-        if (err) return console.error(err);
-        const db = client.db("test-db");
-        testConnection = db.collection("test");
-        //console.log(testConnection);
-    }
+  connectionString,
+  {
+    useUnifiedTopology: true,
+  },
+  (err, client) => {
+    // ... do something here
+    if (err) return console.error(err);
+    const db = client.db("test-db");
+    testConnection = db.collection("test");
+    //console.log(testConnection);
+  }
 );
