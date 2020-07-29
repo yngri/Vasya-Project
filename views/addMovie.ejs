@@ -1,0 +1,15 @@
+<body>
+  <form action="/api/addMovie/handleMovieSubmit" method="POST">
+    <label for="title">Title:</label><br />
+    <input type="text" name="title" />
+    <br /><br />
+    <label for="genre">Select a genre:</label>
+    <select name="genre">
+      <% for (var i = 0; i < genre.length; i ++) {%>
+      <option value="<%= genre[i].id %>"><%= genre[i].name %></option>
+      <% } %>
+    </select>
+    <br /><br />
+    <input type="submit" value="Submit movie" />
+  </form>
+</body>
