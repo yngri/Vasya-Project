@@ -8,14 +8,23 @@ const router = express.Router();
 const app = express();
 
 router.get("/", (req, res) => {
-  Genre.find({}, function (err, result) {
-    // console.log(result);
+  Movie.find({})
+    .populate("genre")
+    .exec(function (err, result) {
+      console.log(result);
 
-    res.render("getMovies", {
-      title: "Movies App",
-      genre: result,
+      res.render("getMovies", {
+        moviesArray: result,
+      });
     });
-  });
+
+  // Movie.find({}, function (err, result) {
+  //   console.log(result);
+
+  //   res.render("getMovies", {
+  //     moviesArray: result,
+  //   });
+  // });
 });
 
 module.exports = router;
