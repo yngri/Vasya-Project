@@ -15,6 +15,7 @@ router.get("/", (req, res) => {
 
       res.render("getMovies", {
         moviesArray: result,
+        clickHandler: "onClick();",
       });
     });
 

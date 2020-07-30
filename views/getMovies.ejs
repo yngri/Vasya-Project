@@ -29,15 +29,11 @@
       <% } %>
     </tbody>
   </table>
-  <p onclick='<%= clickHandler %>'>Click Me</p>
 
+  <button onclick='<%= clickHandler %>'>Click Me</button>
   <script>
-    function func1() {
-      console.log("I am in the click handler 1!");
-    }
-
-    function func2() {
-      console.log("I am in the click handler 2!");
+    function onClick() {
+      console.log("onClick clicked");
     }
   </script>
 </body>
