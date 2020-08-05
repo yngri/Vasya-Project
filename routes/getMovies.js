@@ -15,17 +15,16 @@ router.get("/", (req, res) => {
 
       res.render("getMovies", {
         moviesArray: result,
-        clickHandler: "onClick();",
       });
     });
+});
 
-  // Movie.find({}, function (err, result) {
-  //   console.log(result);
+router.delete("/:id", async (req, res) => {
+  const movie = await Movie.findByIdAndRemove(req.body.movieID);
+  if (!movie)
+    return res.status(404).send("The movie with the given Id was not found.");
 
-  //   res.render("getMovies", {
-  //     moviesArray: result,
-  //   });
-  // });
+  res.redirect("/getMovies");
 });
 
 module.exports = router;

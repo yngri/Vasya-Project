@@ -6,6 +6,8 @@
   <title>Get Movies Page</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -15,25 +17,42 @@
         <th scope="col">#</th>
         <th scope="col">Movie title</th>
         <th scope="col">Genre</th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
-      <% for (var i = 0; i < moviesArray.length; i ++) {%>
+      <% for (var i = 0; i < moviesArray.length; i++) {%>
       <tr>
         <td><%= i+1 %></td>
         <td><%= moviesArray[i].title %></td>
         <td>
           <%= moviesArray[i].genre.name %>
         </td>
+        <td id="<%= moviesArray[i].id %>">
+          <button onclick="handleMovieDelete()">Delete</button>
+        </td>
       </tr>
       <% } %>
     </tbody>
   </table>
-
-  <button onclick='<%= clickHandler %>'>Click Me</button>
   <script>
-    function onClick() {
-      console.log("onClick clicked");
+    function handleMovieDelete() {
+      var target = $(event.target);
+
+      // This is an ID of a movie record as it is represented in DB
+      const movieID = $(target).closest("td").attr('id');
+      // console.log(movieID);
+
+      // Write a POST method that sends this ID to a server -> remove the movie with corresponding ID from the database -> reload the page (generate a new Template Instance)
+      $.ajax({
+        url: 'http://localhost:3000/api/getMovies/handleMovieDelete',
+        type: 'POST',
+        // contentType: 'text',
+        // dataType: 'application/json',
+        data: {
+          "data": $movieID
+        }
+      })
     }
   </script>
 </body>
