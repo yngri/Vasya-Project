@@ -19,12 +19,35 @@ router.get("/", (req, res) => {
     });
 });
 
-router.delete("/:id", async (req, res) => {
-  const movie = await Movie.findByIdAndRemove(req.body.movieID);
-  if (!movie)
-    return res.status(404).send("The movie with the given Id was not found.");
+router.put("/:id", async (req, res) => {
+  if (error) return res.status(400).send(error.details[0].message);
 
-  res.redirect("/getMovies");
+  const genre = await Genre.findById(req.body.genreId);
+  if (!genre) return res.status(400).send("Invalid genre.");
+
+  const movie = await Movie.findByIdAndUpdate(
+    req.params.id,
+    {
+      title: req.body.title,
+      genre: {
+        name: genre.name,
+        _id: genre.id,
+      },
+    },
+    { new: true }
+  );
+});
+
+router.post("/", async (req, res) => {
+  const movieIdArray = { _id: { $in: req.body.movieIdArray } };
+  console.log(movieIdArray);
+  await Movie.deleteMany(movieIdArray, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 module.exports = router;

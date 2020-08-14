@@ -19,10 +19,10 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/handleMovieSubmit", async (req, res) => {
-  const genre = await Genre.findById(req.body.genreId);
+router.post("/", async (req, res) => {
+  const genre = await Genre.findById(req.body.genre);
   console.log(req.body);
-  // if (!genre) return res.status(400).send("Invalid genre.");
+  if (!genre) return res.status(400).send("Invalid genre.");
 
   let movie = new Movie({
     title: req.body.title,
@@ -30,7 +30,7 @@ router.post("/handleMovieSubmit", async (req, res) => {
   });
   movie = await movie.save();
 
-  res.send(movie);
+  res.sendStatus(200);
 });
 
 module.exports = router;

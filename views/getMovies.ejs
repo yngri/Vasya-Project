@@ -11,11 +11,16 @@
 </head>
 
 <body>
+
+  <button type="button" class="btn btn-danger" onclick="handleAddMovRedirect()">Add new movie</button><br>
+
+  <br>
   <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Movie title</th>
+        <th scope="col"></th>
+        <th scope="col">Title</th>
         <th scope="col">Genre</th>
         <th scope="col"></th>
       </tr>
@@ -24,33 +29,84 @@
       <% for (var i = 0; i < moviesArray.length; i++) {%>
       <tr>
         <td><%= i+1 %></td>
+        <td>
+          <div class="form-check">
+            <input class="checkedMovie" type="checkbox" value=<%= moviesArray[i]._id %>>
+          </div>
+        </td>
         <td><%= moviesArray[i].title %></td>
         <td>
           <%= moviesArray[i].genre.name %>
         </td>
         <td id="<%= moviesArray[i].id %>">
-          <button onclick="handleMovieDelete()">Delete</button>
+          <button type="button" class="btn btn-primary" onclick="handleMovieUpdate()">Update</button>
         </td>
       </tr>
       <% } %>
     </tbody>
   </table>
+
+  <button type="button" class="btn btn-warning" onclick="handleMovieDelete()">Delete</button>
+
   <script>
-    function handleMovieDelete() {
+    function handleAddMovRedirect() {
+      window.location = '/api/addMovie';
+    };
+
+    function handleMovieUpdate() {
+      // var target = $(event.target);
+
+      // // This is an ID of a movie record as it is represented in DB
+      // const movieID = $(target).closest("td").attr('id');
+      // console.log(movieID);
       var target = $(event.target);
 
-      // This is an ID of a movie record as it is represented in DB
-      const movieID = $(target).closest("td").attr('id');
-      // console.log(movieID);
+      const movieID = $(target).closest("td").find('[type=checkbox]').prop('checked', true);
+      console.log(movieID);
+
+      // $.ajax({
+      //   type: 'PUT',
+      //   url: 'http://localhost:3000/api/handleMovieSubmit',
+      //   data: {
+      //     "movieIdForUpdate": movieID
+      //   },
+      //   success: function (res) {
+      //     location.reload();
+      //   },
+      //   error: function (jqXHR, status, error) {
+      //     console.log(jqXHR.status);
+      //     console.log(jqXHR.responseText);
+      //     console.log(status);
+      //     console.log(error);
+      //   }
+      // })
+    }
+
+    function handleMovieDelete() {
+      var movieIdArray = [];
+      $(".checkedMovie").each(function () {
+        if ($(this).is(':checked')) {
+          movieIdArray.push($(this).val());
+        }
+      });
+
+      console.log(movieIdArray);
 
       // Write a POST method that sends this ID to a server -> remove the movie with corresponding ID from the database -> reload the page (generate a new Template Instance)
       $.ajax({
-        url: 'http://localhost:3000/api/getMovies/handleMovieDelete',
         type: 'POST',
-        // contentType: 'text',
-        // dataType: 'application/json',
+        url: 'http://localhost:3000/api/getMovies',
         data: {
-          "data": $movieID
+          "movieIdArray": movieIdArray
+        },
+        success: function (res) {
+          location.reload();
+        },
+        error: function (jqXHR, status, error) {
+          console.log(jqXHR.status);
+          console.log(jqXHR.responseText);
+          console.log(status);
+          console.log(error);
         }
       })
     }
