@@ -27,11 +27,11 @@
     </thead>
     <tbody>
       <% for (let i = 0; i < moviesArray.length; i++) {%>
-      <tr>
+      <tr class="ap-table-row">
         <td><%= i+1 %></td>
         <td>
           <div class="form-check">
-            <input class="checkedMovie" type="checkbox" value=<%= moviesArray[i]._id %>>
+            <input class="ap-movie-checkbox" type="checkbox" value=<%= moviesArray[i]._id %>>
           </div>
         </td>
         <td><%= moviesArray[i].title %></td>
@@ -54,15 +54,10 @@
     };
 
     function handleMovieUpdate() {
-      // var target = $(event.target);
 
-      // // This is an ID of a movie record as it is represented in DB
-      // const movieID = $(target).closest("td").attr('id');
-      // console.log(movieID);
       var target = $(event.target);
+      const movieID = $(target).closest(".ap-table-row").find(".ap-movie-checkbox").first().val();
 
-      const movieID = $(target).closest("td").find('[type=checkbox]').prop('checked', true);
-      console.log(movieID);
 
       // $.ajax({
       //   type: 'PUT',
