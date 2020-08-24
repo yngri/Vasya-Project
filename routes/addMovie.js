@@ -9,8 +9,6 @@ const app = express();
 
 router.get("/", (req, res) => {
   Genre.find({}, function (err, result) {
-    // console.log(result);
-
     res.render("addMovie", {
       title: "Movies App",
       message: "Best Movie db",

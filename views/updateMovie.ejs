@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Update Movies Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <label for="title">Title:</label><br />
+    <input type="text" name="title" id="movieTitle" value="<%= movie.title %>" />
+    <br /><br />
+    <label for="genre">Select a genre:</label>
+    <select name="genre" id="movieGenre">
+        <% for (var i = 0; i < genre.length; i ++) {%>
+        <option value="<%= genre[i].id %>" <%= genre[i].id == movie.genre ? "selected" : "" %>><%= genre[i].name %>
+        </option>
+        <% } %>
+    </select>
+    <br /><br />
+    <button type="button" class="btn btn-warning" onclick="handleUpdateMovie()">
+        Update Movie
+    </button>
+    <div id="hiddenMovieId" data-value="<%= movie._id %>" style="display: none;"></div>
+
+    <script>
+        function handleUpdateMovie() {
+            // var title = document.getElementById("movieTitle").value;
+            var title = $("#movieTitle").val();
+            //var genre = document.getElementById("movieGenre").value;
+            var genre = $("#movieGenre").val();
+            var movieId = document.getElementById('hiddenMovieId').getAttribute('data-value');
+
+            $.ajax({
+                type: "PUT",
+                url: "http://localhost:3000/api/updateMovie",
+                data: {
+                    title: title,
+                    genre: genre,
+                    movieId: movieId,
+
+                },
+                success: function (res) {
+                    window.location = '/api/getMovies';
+                },
+                error: function (jqXHR, status, error) {
+                    console.log(jqXHR.status);
+                    console.log(jqXHR.responseText);
+                    console.log(status);
+                    console.log(error);
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -57,24 +57,7 @@
 
       var target = $(event.target);
       const movieID = $(target).closest(".ap-table-row").find(".ap-movie-checkbox").first().val();
-
-
-      // $.ajax({
-      //   type: 'PUT',
-      //   url: 'http://localhost:3000/api/handleMovieSubmit',
-      //   data: {
-      //     "movieIdForUpdate": movieID
-      //   },
-      //   success: function (res) {
-      //     location.reload();
-      //   },
-      //   error: function (jqXHR, status, error) {
-      //     console.log(jqXHR.status);
-      //     console.log(jqXHR.responseText);
-      //     console.log(status);
-      //     console.log(error);
-      //   }
-      // })
+      window.location = '/api/updateMovie?id=' + movieID;
     }
 
     function handleMovieDelete() {
