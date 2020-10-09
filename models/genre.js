@@ -10,6 +10,8 @@ const genreSchema = new mongoose.Schema({
   },
 });
 
+console.log('Hello world!');
+
 const Genre = mongoose.model("Genre", genreSchema);
 
 function validateGenre(genre) {
