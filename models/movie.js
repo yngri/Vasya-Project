@@ -4,18 +4,21 @@ const { Genre } = require("./genre");
 
 const Movie = mongoose.model(
   "Movies",
-  new mongoose.Schema({
-    title: {
-      type: String,
-      required: true,
-      minlength: 2,
-      maxlength: 100,
+  new mongoose.Schema(
+    {
+      title: {
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 100,
+      },
+      genre: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Genre",
+      },
     },
-    genre: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Genre",
-    },
-  })
+    { timestamps: true }
+  )
 );
 
 function validateMovie(movie) {

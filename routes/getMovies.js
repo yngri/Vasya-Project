@@ -29,4 +29,6 @@ router.post("/", async (req, res) => {
   });
 });
 
+var dateStr = "Tue Aug 25 2020 17:02:11 GMT-0400 (Eastern Daylight Time)";
+
 module.exports = router;

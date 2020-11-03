@@ -11,10 +11,10 @@
 </head>
 
 <body>
+  <button type="button" class="btn btn-danger" onclick="handleAddMovRedirect()">
+    Add new movie</button><br />
 
-  <button type="button" class="btn btn-danger" onclick="handleAddMovRedirect()">Add new movie</button><br>
-
-  <br>
+  <br />
   <table class="table table-striped">
     <thead>
       <tr>
@@ -22,6 +22,8 @@
         <th scope="col"></th>
         <th scope="col">Title</th>
         <th scope="col">Genre</th>
+        <th scope="col">Created</th>
+        <th scope="col">Updated</th>
         <th scope="col"></th>
       </tr>
     </thead>
@@ -31,39 +33,66 @@
         <td><%= i+1 %></td>
         <td>
           <div class="form-check">
-            <input class="ap-movie-checkbox" type="checkbox" value=<%= moviesArray[i]._id %>>
+            <input class="ap-movie-checkbox" type="checkbox" value="<%= moviesArray[i]._id%>" />
           </div>
         </td>
         <td><%= moviesArray[i].title %></td>
-        <td>
-          <%= moviesArray[i].genre.name %>
-        </td>
+        <td><%= moviesArray[i].genre.name %></td>
+        <td><%- displayDateinReadableFormat(moviesArray[i].createdAt) %></td>
+
+        <% function displayDateinReadableFormat(dateString) {
+        const date = new Date(dateString);
+        let d = date.getDate();
+        d = ("0" + d).slice(-2);
+        let m = date.getMonth() + 1;
+        m = ("0" + m).slice(-2);
+        let y = date.getFullYear();
+        let hh = date.getHours();
+        hh = ("0" + hh).slice(-2);
+        let mm = date.getMinutes();
+        mm = ("0" + mm).slice(-2);
+        let ss = date.getSeconds();
+        ss = ("0" + ss).slice(-2);
+
+        let formattedDate = `${d}-${m}-${y} ${hh}:${mm}:${ss}`;
+
+        return formattedDate;
+        } %>
+        <td><%- displayDateinReadableFormat(moviesArray[i].updatedAt) %></td>
+
         <td id="<%= moviesArray[i].id %>">
-          <button type="button" class="btn btn-primary" onclick="handleMovieUpdate()">Update</button>
+          <button type="button" class="btn btn-primary" onclick="handleMovieUpdate()">
+            Update
+          </button>
         </td>
       </tr>
       <% } %>
     </tbody>
   </table>
 
-  <button type="button" class="btn btn-warning" onclick="handleMovieDelete()">Delete</button>
+  <button type="button" class="btn btn-warning" onclick="handleMovieDelete()">
+    Delete
+  </button>
 
   <script>
     function handleAddMovRedirect() {
-      window.location = '/api/addMovie';
-    };
+      window.location = "/api/addMovie";
+    }
 
     function handleMovieUpdate() {
-
       var target = $(event.target);
-      const movieID = $(target).closest(".ap-table-row").find(".ap-movie-checkbox").first().val();
-      window.location = '/api/updateMovie?id=' + movieID;
+      const movieID = $(target)
+        .closest(".ap-table-row")
+        .find(".ap-movie-checkbox")
+        .first()
+        .val();
+      window.location = "/api/updateMovie?id=" + movieID;
     }
 
     function handleMovieDelete() {
       var movieIdArray = [];
       $(".ap-movie-checkbox").each(function () {
-        if ($(this).is(':checked')) {
+        if ($(this).is(":checked")) {
           movieIdArray.push($(this).val());
         }
       });
@@ -72,10 +101,10 @@
 
       // Write a POST method that sends this ID to a server -> remove the movie with corresponding ID from the database -> reload the page (generate a new Template Instance)
       $.ajax({
-        type: 'POST',
-        url: 'http://localhost:3000/api/getMovies',
+        type: "POST",
+        url: "http://localhost:3000/api/getMovies",
         data: {
-          "movieIdArray": movieIdArray
+          movieIdArray: movieIdArray,
         },
         success: function (res) {
           location.reload();
@@ -85,8 +114,8 @@
           console.log(jqXHR.responseText);
           console.log(status);
           console.log(error);
-        }
-      })
+        },
+      });
     }
   </script>
 </body>
