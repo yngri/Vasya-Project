@@ -1,123 +1,86 @@
-function doSmth() {
+function getDebtors() {
   
-  var sheet = SpreadsheetApp;
-  var ass = sheet.getActiveSpreadsheet();
-  var s = ass.getSheetByName('Пользователи системы');
+  var spreadSheet = SpreadsheetApp;
+  var activeSpreadsheet = spreadSheet.getActiveSpreadsheet();
+  var clientsSpreadsheet  = activeSpreadsheet.getSheetByName('Пользователи системы');
   
   var debtors = [];
-  var allClientDataRange = s.getRange(4, 1, s.getLastRow(), 6).getValues(); // The range of all clients' contact data (left block of the table)
-  var dateRangeArray = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0]; // The range of all mm/year columns
   
-  // Get current date in 'mm/yyyy' format
-  var dateObj = new Date();
-  var month = dateObj.getUTCMonth() + 1; //months from 1-12
-  var year = dateObj.getUTCFullYear();
-  var currentDate = month + "/" + year;
+  var dateColumn = 0; // A variable to store the index of a date column that matched the current date
+  
+  var FIRST_ROW = 1;
+  var FIRST_ID_ROW = 4;
+  var FIRST_COLUMN = 1;
+  var LAST_ROW = clientsSpreadsheet.getLastRow();
+  var LAST_COLUMN = clientsSpreadsheet.getLastColumn();
+  var LAST_CLIENT_DATA_COLUMN = 6;
+  
+  var ID_COLUMN_INDEX = 0;
+  var HAS_PAID_COLUMN_INDEX = 4;
+  var PHONE_COLUMN_INDEX = 4;
+  var DEBT_AMOUNT_COLUMN_INDEX = 3;
+  
+  var INDEX_MATCHER = 1; // Adding this variable to the index of an Nth element of an array matches it with the corresponding index from the table
+  
+  var clientDataRange = clientsSpreadsheet.getRange(FIRST_ID_ROW, FIRST_COLUMN, LAST_ROW, LAST_CLIENT_DATA_COLUMN).getValues(); // The range of all clients' contact data (left block of the table);
+  
+  var dateRange = clientsSpreadsheet.getRange(FIRST_ROW, FIRST_COLUMN, FIRST_ROW, LAST_COLUMN).getValues()[0]; // The range of all mm/year columns
+  
+  var currentDate = formatCurrentDate(); // Get current date in 'mm/yyyy' format
+
   
   // Loop through the date columns to find one that matches the current date
-  for (var i = 0; i < dateRangeArray.length; i++) {
-  if (currentDate == dateRangeArray[i]) { var dateColumn = i }
+  for (var currentColumn = 1; currentColumn <= dateRange.length; currentColumn++) {
+    if (currentDate == dateRange[currentColumn]) { 
+    var dateColumn = currentColumn+INDEX_MATCHER;
+    };
   }
+
   
-  var paymentDataRange = s.getRange(4, dateColumn+1, s.getLastRow(), 6).getValues(); // The range of all the payment data matched with the current month
+  if (!dateColumn) {
+    throw new Error('The value of Date Column doesnt match to the current date');
+  };
   
   
-  for (var i = 0; i<allClientDataRange.length; i++) {
-    var idValue = allClientDataRange[i][0];
-    var isPaidValue = paymentDataRange[i][4];
-    var phoneValue = allClientDataRange[i][4];
-    var amountValue = paymentDataRange[i][3];
+  var paymentDataRange = clientsSpreadsheet.getRange(FIRST_ID_ROW, dateColumn, LAST_ROW, LAST_CLIENT_DATA_COLUMN).getValues(); // The range of all the payment data matched with the current month
+  
+  
+  for (var currentRow = 0; currentRow<clientDataRange.length; currentRow++) {
     
-    if (idValue.toString()[0] != '1') break;
+    var clientId = clientDataRange[currentRow][ID_COLUMN_INDEX];
+    if (clientId.toString().trim() == 'Итого' || clientId.toString()[0].trim() == '5') break;
+    var phoneNumber = clientDataRange[currentRow][PHONE_COLUMN_INDEX];
     
-    if (!isPaidValue){
+    var hasPaid = paymentDataRange[currentRow][HAS_PAID_COLUMN_INDEX];
+    var debtAmount = paymentDataRange[currentRow][DEBT_AMOUNT_COLUMN_INDEX];
+    
+    if (!hasPaid){
     debtors.push({
-      id: idValue,
-      Phone: phoneValue,
-      Amount: amountValue     
+      id: clientId,
+      Phone: phoneNumber,
+      Amount: debtAmount,
+      date: currentDate
     });
-  }
-       
-}
+  }       
+ }
   
-  var outputArray = JSON.stringify(debtors); 
-  Logger.log(outputArray);  
+ Logger.log(JSON.stringify(debtors));  
   
 } 
 
-//  // Get current date in mm/yyyy format
-//  var dateObj = new Date();
-//  var month = dateObj.getUTCMonth() + 1; //months from 1-12
-//  var year = dateObj.getUTCFullYear();
-//  var currentDate = month + "/" + year;
-//  //var currentDate = '01/2021'
-//  
-//  
-//  // Get range of columns containing the written date (e.g '12/2020')
-//  var dateRangeArray = s.getRange(1, 1, 1, s.getLastColumn()).getValues();
-//  var dateRange = dateRangeArray[0];
-//  
-//  // Loop through the date columns to find one matching the current date
-//  for (var i = 0; i < dateRange.length; i++) {
-//  if (currentDate == dateRange[i]) { var dateColumn = i }
-//  }
-//  
-//  // Store the column ranges with the data necessary for export
-//  var isPaidRange = s.getRange(4,dateColumn+5,169).getValues();
-//  var idRange = s.getRange(4,1,169).getValues();
-//  var phoneRange = s.getRange(4,5,169).getValues();
-//  var amountRange = s.getRange(4,dateColumn+4,169).getValues();
-//  
-//  
-////Converting 2d array into 1d array
-//var isPaidArray = [];
-//  for (var r=0; r<isPaidRange.length; r++) {
-//    for (i in isPaidRange[0]) {
-//      var cell = isPaidRange[r][i];
-//      isPaidArray.push(cell);
-//    }
-//  }
-//  //Logger.log(isPaidArray);
 
+function formatCurrentDate () {
+  var currentDateInMilliseconds = new Date();
+  var day = currentDateInMilliseconds.getDate();  
   
-//// Loop through the isPaid range to find the missing payments and push the debtor(s) info into an object(s)
-//  for (var i = 0; i < isPaidArray.length; i++) {
-//    if (isPaidArray[i] == false) 
-//    { debtors.push(
-//      { ID : idArray[i],
-//        Phone : phoneArray[i],
-//        Amount : amountArray[i]
-//      });
-//    }
-//  }
-//  
-//  var debtorsJsonArray = JSON.stringify(debtors); 
-//  Logger.log(debtorsJsonArray);  
-
-
-
-  
-  // Non-optimized Object population
-// ID : activeSheet.getRange(i, 1).getValue(),
-// Phone : activeSheet.getRange(i, 5).getValue(),
-// Amount : activeSheet.getRange(i, 73).getValue()
-
-
-// Time formatting Function (Ms to hh:mm:ss)
-// function msToTime(duration) {
-//   var milliseconds = parseInt((duration % 1000) / 100),
-//     seconds = Math.floor((duration / 1000) % 60),
-//     minutes = Math.floor((duration / (1000 * 60)) % 60),
-//     hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-//
-//   hours = (hours < 10) ? "0" + hours : hours;
-//   minutes = (minutes < 10) ? "0" + minutes : minutes;
-//   seconds = (seconds < 10) ? "0" + seconds : seconds;
-//
-//   return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-//   }
-//  Logger.log(msToTime(new Date().getTime()));
-
-// var tempValue = activeSheet.getRange("A6").getValue(); // get the value of a cell
-// activeSheet.getRange("C6:D7").setValue(tempValue); // overwrite the range with the value taken from the cell
-// Logger.log(s.getActiveCell().getColumn()); // get active cell column index
+  var currentMonthIndex = 1;
+  var nextMonthIndex = 2;
+  if (day<=20) {var month = String(currentDateInMilliseconds.getMonth() + currentMonthIndex).padStart(2, '0')
+  } else {
+  var month = String(currentDateInMilliseconds.getMonth() + nextMonthIndex).padStart(2, '0')
+  };
+ 
+  var year = currentDateInMilliseconds.getUTCFullYear();
+  var currentDate = month + "/" + year;
+  return currentDate;
+}
